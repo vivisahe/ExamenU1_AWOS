@@ -15,7 +15,7 @@ const response = await fetch("https://newsapi.org/v2/everything?q=news&sortBy=pu
         const divX = document.createElement("div");
         divX.classList.add("col-md-6");
 
-        divX.innerHTML=`<div class="card" style="width: 30rem;">
+        divX.innerHTML=`<div class="card h-100">
                         <div class="card-body">
                         <h5 class="card-title">${element.title}</h5>
                         <p class="card-text"> ${element.source.name}</p>
@@ -33,20 +33,32 @@ const buscarNoticia = async(event) => {
     if (event) event.preventDefault();
     const noticiaBusqueda = inputBuscador.value;
     if(noticiaBusqueda == ""){
-        contentData.innerHTML=("Campo de texto vacio, ingresa una busqueda");
+        contentData.innerHTML=(`<div class="alert alert-info w-100 text-center"> Campo de texto vacio, ingresa una busqueda</div>`);
         return
     }else{
-         const response = await fetch(`https://newsapi.org/v2/everything?q=${noticiaBusqueda}&apiKey=6f0e8a814397413e8e73e358737159ed`);
-    const data = await response.json();
-    console.log("Datos encontrados:", data);
-    contentData.innerHTML = ""; 
+ let url = `https://newsapi.org/v2/everything?q=${noticiaBusqueda}&sortBy=popularity&apiKey=6f0e8a814397413e8e73e358737159ed`;         
+        if (inputFechaInicio.value) {
+            url += `&from=${inputFechaInicio.value}`;
+        }
+        if (inputFechaFin.value) {
+            url += `&to=${inputFechaFin.value}`;
+        }
+        const response = await fetch(url);
+        const data = await response.json();
+        contentData.innerHTML = "";
+        if (data.articles.length === 0) {
+            contentData.innerHTML = `<div class="alert alert-info w-100 text-center">
+                                        No se encontraron noticias para "${noticiaBusqueda}" en el rango de fechas seleccionado.
+                                     </div>`;
+            return;
+        }
 
     data.articles.forEach(element => {
         const imagenSegura = element.urlToImage || 'https://www.csam.unam.mx/static/images/imagen-no-disponible.jpg';
         const divX = document.createElement("div");
         divX.classList.add("col-md-6");
 
-        divX.innerHTML = `<div class="card" style="width: 30rem;">
+        divX.innerHTML = `<div class="card h-100">
                             <div class="card-body">
                                 <h5 class="card-title">${element.title}</h5>
                                 <p class="card-text"> ${element.source.name}</p>
