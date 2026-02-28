@@ -45,6 +45,7 @@ const buscarNoticia = async(event) => {
         }
         const response = await fetch(url);
         const data = await response.json();
+        console.log(data);
         contentData.innerHTML = "";
         if (data.articles.length === 0) {
             contentData.innerHTML = `<div class="alert alert-info w-100 text-center">
